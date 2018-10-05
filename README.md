@@ -1,6 +1,7 @@
 # go-
 #本文来自 qq_20996105 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/qq_20996105/article/details/82937421?utm_source=copy 
 高并发下map和chan实现的链接池的线程安全及效率
+
 1.背景
 上一次blog写着写着崩掉了，这次一定写完一节保存一节。
 目前从事go语言的后台开发，在集群通信时需要用到thrift的rpc。由于集群间通信非常频繁且并发需求很高，所以只能采用连接池的形式。由于集群规模是有限的，每个节点都需要保存平行节点的连接，所以链接池的实现方式应该是map[host]chan conn。在go语言中，我们知道channel是线程安全的，但map却不是线程安全的。所以我们需要适当的加锁来保证其线程安全同时兼顾效率。
@@ -14,6 +15,7 @@
 放回链接池时若链接池已满，则关闭该链接并将其交给gc
 
 3.链接池的一般定义
+
 type factory func(host string) conn
 
 type conn interface {
